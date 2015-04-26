@@ -28,6 +28,15 @@ $(BINDIR)/cpm: $(OBJDIR)/main.o $(OBJDIR)/sparse_vector.o \
 			 $(OBJDIR)/cpm.o
 	$(CXX) -o $@ $(OFLAG) $(CXXFLAGS) $^
 
+libcpm.so: $(OBJDIR)/sparse_vector.o \
+			 $(OBJDIR)/dense_matrix.o \
+			 $(OBJDIR)/stochastic_data_adaptor.o \
+			 $(OBJDIR)/eval_utils.o \
+			 $(OBJDIR)/convex_polytope_machine.o\
+			 $(OBJDIR)/cpm.o \
+			 $(OBJDIR)/cpm_c.o
+	$(CXX) -fPIC -shared -o $@ $(OFLAG) $(CXXFLAGS) $^
+
 wrapper: python.i
 	swig $(SWIGFLAGS) -outdir $(VPATH) -o $(VPATH)/python_wrap.cpp $^
 
@@ -57,6 +66,9 @@ $(OBJDIR)/option_parser.o: option_parser.cpp option_parser.h
 	$(CXX) -c $(CXXFLAGS) $(OFLAG) $< -o $@
 
 $(OBJDIR)/cpm.o: cpm.cpp cpm.h
+	$(CXX) -c $(CXXFLAGS) $(OFLAG) $< -o $@
+
+$(OBJDIR)/cpm_c.o: cpm_c.cpp cpm_c.h
 	$(CXX) -c $(CXXFLAGS) $(OFLAG) $< -o $@
 
 $(OBJDIR)/eval_utils.o: eval_utils.cpp eval_utils.h
