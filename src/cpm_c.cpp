@@ -8,23 +8,22 @@ extern "C" {
         return (cpm_model)model;
     }
 
-    //StochasticDataAdaptor(float* data, int* labels, size_t n_instances, size_t n_dimensions);
-    //void fit(const StochasticDataAdaptor& trainset, int iterations, bool reshuffle, bool verbose);
     void fit(cpm_model c_model, float* data, int* labels, size_t n_instances, size_t n_dimensions, int iterations, bool reshuffle, bool verbose) {
-        printf("sizeof(int) %lu\n", sizeof(int));
-        printf("sizeof(float) %lu\n", sizeof(float));
         CPM* model = (CPM*)c_model;
         StochasticDataAdaptor sda = StochasticDataAdaptor(data, labels, n_instances, n_dimensions);
         model->fit(sda, iterations, reshuffle, verbose);
     }
     
-    //void predict(const StochasticDataAdaptor& testset, float* scores, int* assignments) const;
     void predict(cpm_model c_model, float* data, int* labels, size_t n_instances, size_t n_dimensions, float* scores, int* assignments) {
         CPM* model = (CPM*)c_model;
         StochasticDataAdaptor sda = StochasticDataAdaptor(data, labels, n_instances, n_dimensions);
         model->predict(sda, scores, assignments);
-        printf("[predict] assignments: %d %d\n", assignments[0], assignments[1]);
-        printf("[predict] labels: %d %d\n", labels[0], labels[1]);
+    }
+
+    void predict_dataset(cpm_model c_model, cpm_dataset c_dataset, float* scores, int* assignments) {
+        CPM* model = (CPM*)c_model;
+        StochasticDataAdaptor* sda = static_cast<StochasticDataAdaptor*>(c_dataset);
+        model->predict(*sda, scores, assignments);
     }
 
     void serializeModel(cpm_model c_model, const char* filename) {
@@ -48,9 +47,6 @@ extern "C" {
 
     cpm_dataset cpm_dataset_from_file(const char* fname, size_t n_instances) {
         StochasticDataAdaptor* sda = new StochasticDataAdaptor::StochasticDataAdaptor(fname, n_instances);
-        //StochasticDataAdaptor* p_sda = static_cast<StochasticDataAdaptor*>(&sda);
-        printf("Ninst: %lu\n", sda->getNInstances());
-        //return static_cast<cpm_dataset>(p_sda);
         return (cpm_dataset)sda;
     }
 

@@ -9,6 +9,7 @@ extern "C" {
     cpm_model create(void);
     void fit(cpm_model, float*, int*, size_t, size_t, int, bool, bool);
     void predict(cpm_model, float*, int*, size_t, size_t, float*, int*);
+    void predict_dataset(cpm_model, cpm_dataset, float*, int*);
     void serializeModel(cpm_model, const char*);
     cpm_model deserializeModel(const char* filename);
     int get_outer_label(cpm_model);
